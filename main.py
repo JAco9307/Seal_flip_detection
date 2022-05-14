@@ -7,12 +7,13 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
-    size = (640, 360)
     train = ImageDataGenerator(rescale=1/255)
     test = ImageDataGenerator(rescale=1/255)
 
-    train_dataset = train.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Train_white")
-    test_dataset = test.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Test_white")
+    train_dataset = train.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Train_white",
+                                              target_size=(256, 256), batch_size=10, class_mode='binary')
+    test_dataset = test.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Test_white",
+                                            target_size=(256, 256), batch_size=10, class_mode='binary')
 
     model = keras.Sequential()
 
@@ -25,12 +26,12 @@ if __name__ == '__main__':
     model.add(keras.layers.MaxPool2D(2, 2))
 
     # Convolutional layer and maxpool layer 3
-    model.add(keras.layers.Conv2D(128,(3,3),activation='relu'))
-    model.add(keras.layers.MaxPool2D(2,2))
+    model.add(keras.layers.Conv2D(128, (3, 3), activation='relu'))
+    model.add(keras.layers.MaxPool2D(2, 2))
 
     # Convolutional layer and maxpool layer 4
-    model.add(keras.layers.Conv2D(128,(3,3),activation='relu'))
-    model.add(keras.layers.MaxPool2D(2,2))
+    model.add(keras.layers.Conv2D(128, (3, 3), activation='relu'))
+    model.add(keras.layers.MaxPool2D(2, 2))
 
     # This layer flattens the resulting image array to 1D array
     model.add(keras.layers.Flatten())
@@ -44,16 +45,17 @@ if __name__ == '__main__':
 
     # model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-    model.compile(loss='binary_crossentropy',optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
+    model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
     # model.fit_generator(train_dataset, steps_per_epoch=20, epochs=5, validation_data=test_dataset)
-    history = model.fit(train_dataset, steps_per_epoch=20, batch_size=16, epochs=15, verbose=1, validation_data=test_dataset, validation_steps=80)
-
+    history = model.fit(train_dataset, steps_per_epoch=10, batch_size=30, epochs=25, verbose=1, validation_data=test_dataset, validation_steps=800)
 
     def predict_image(filename):
         img1 = image.load_img(filename, target_size=(256, 256))
 
-        plt.imshow(img1)
+        img2 = image.load_img(filename, target_size=(540, 960))
+
+        plt.imshow(img2)
 
         Y = image.img_to_array(img1)
 
@@ -68,5 +70,7 @@ if __name__ == '__main__':
 
             plt.xlabel("Flipped", fontsize=30)
 
-    predict_image("C:/Users/skriv/PycharmProjects/MDB1/Test_images/Flipped/IMG_20220512_224225.jpg")
-    predict_image("C:/Users/skriv/PycharmProjects/MDB1/Test_images/NotFlipped/IMG_20220512_224301.jpg")
+    predict_image(r"C:/Users/skriv/PycharmProjects/MDB1/Training_w/Test_white/Flipped/TWTF_1.jpg")
+    predict_image(r"C:/Users/skriv/PycharmProjects/MDB1/Training_w/Test_white/NotFlipped/TWTN_1.jpg")
+
+
