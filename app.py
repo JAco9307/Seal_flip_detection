@@ -1,5 +1,6 @@
 import numpy as np
-import scipy
+import cv2
+import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
@@ -47,9 +48,39 @@ if __name__ == '__main__':
 
     model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
-    # model.fit_generator(train_dataset, steps_per_epoch=20, epochs=5, validation_data=test_dataset)
-    history = model.fit(train_dataset, steps_per_epoch=10, batch_size=30, epochs=25, verbose=1, validation_data=test_dataset, validation_steps=800)
+    model.load_weights(r'Models/weights1')
 
-    model.save_weights(r'Models/weights1')
+    model.summary()
 
+    def predict_image(img1):
+        img2 = cv2.resize(img1, (256, 256))
+        img2 = img2[..., ::-1].astype(np.float32)
+
+        img1 = img1[..., ::-1]
+
+        plt.imshow(img1)
+        plt.show()
+
+        # Y = image.img_to_array(img2)
+
+        X = np.expand_dims(img2, axis=0)
+        val = model.predict(X)
+        print(val)
+        if val == 1:
+            plt.xlabel("Not Flipped", fontsize=30)
+        elif val == 0:
+            plt.xlabel("Flipped", fontsize=30)
+
+    while True:
+        inp = input('Waiting for input')
+        if inp == 'exit':
+            break
+        print("Processing")
+        cam = cv2.VideoCapture(0)
+        result, image = cam.read()
+        if result:
+            predict_image(image)
+
+        else:
+            print("No image detected. Please! try again")
 
