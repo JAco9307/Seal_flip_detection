@@ -59,7 +59,7 @@ if __name__ == '__main__':
         img1 = img1[..., ::-1]
 
         plt.imshow(img1)
-        plt.show()
+
 
         # Y = image.img_to_array(img2)
 
@@ -70,6 +70,7 @@ if __name__ == '__main__':
             plt.xlabel("Not Flipped", fontsize=30)
         elif val == 0:
             plt.xlabel("Flipped", fontsize=30)
+        plt.show()
 
     while True:
         inp = input('Waiting for input')
