@@ -77,8 +77,9 @@ if __name__ == '__main__':
         if inp == 'exit':
             break
         print("Processing")
-        cam = cv2.VideoCapture(0)
+        cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
         result, image = cam.read()
+        cam.release()
         if result:
             predict_image(image)
 
