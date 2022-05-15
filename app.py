@@ -11,9 +11,9 @@ if __name__ == '__main__':
     train = ImageDataGenerator(rescale=1/255)
     test = ImageDataGenerator(rescale=1/255)
 
-    train_dataset = train.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Train_white",
+    train_dataset = train.flow_from_directory(r"Training_W/Train_white",
                                               target_size=(256, 256), batch_size=10, class_mode='binary')
-    test_dataset = test.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Test_white",
+    test_dataset = test.flow_from_directory(r"Training_W/Test_white",
                                             target_size=(256, 256), batch_size=10, class_mode='binary')
 
     model = keras.Sequential()
@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
-    model.load_weights(r'Models/weights1')
+    model.load_weights(r'Model/weights1')
 
     model.summary()
 
@@ -60,16 +60,15 @@ if __name__ == '__main__':
 
         plt.imshow(img1)
 
-
         # Y = image.img_to_array(img2)
 
         X = np.expand_dims(img2, axis=0)
         val = model.predict(X)
         print(val)
         if val == 1:
-            plt.xlabel("Not Flipped", fontsize=30)
+            plt.title("Not Flipped", fontsize=24)
         elif val == 0:
-            plt.xlabel("Flipped", fontsize=30)
+            plt.title("Flipped", fontsize=24)
         plt.show()
 
     while True:
@@ -77,7 +76,7 @@ if __name__ == '__main__':
         if inp == 'exit':
             break
         print("Processing")
-        cam = cv2.VideoCapture(0, cv2.CAP_DSHOW)
+        cam = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         result, image = cam.read()
         cam.release()
         if result:

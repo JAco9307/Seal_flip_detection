@@ -1,5 +1,6 @@
 import numpy as np
 import scipy
+from keras.callbacks import EarlyStopping
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.preprocessing import image
@@ -7,13 +8,14 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
+    bs = 16
     train = ImageDataGenerator(rescale=1/255)
     test = ImageDataGenerator(rescale=1/255)
 
-    train_dataset = train.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Train_white",
-                                              target_size=(256, 256), batch_size=10, class_mode='binary')
-    test_dataset = test.flow_from_directory("C:/Users/skriv/PycharmProjects/MDB1/Training_W/Test_white",
-                                            target_size=(256, 256), batch_size=10, class_mode='binary')
+    train_dataset = train.flow_from_directory(r"Training_W/Train_white",
+                                              target_size=(256, 256), batch_size=bs, class_mode='binary')
+    test_dataset = test.flow_from_directory(r"Training_W/Test_white",
+                                            target_size=(256, 256), batch_size=bs, class_mode='binary')
 
     model = keras.Sequential()
 
@@ -47,8 +49,23 @@ if __name__ == '__main__':
 
     model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
-    # model.fit_generator(train_dataset, steps_per_epoch=20, epochs=5, validation_data=test_dataset)
-    history = model.fit(train_dataset, steps_per_epoch=10, batch_size=30, epochs=25, verbose=1, validation_data=test_dataset, validation_steps=800)
+    # from tensorflow.keras.optimizers import SGD
+    # opt = SGD(lr=0.01)
+    # model.compile(loss="categorical_crossentropy", optimizer=opt)
+
+    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
+
+    history = model.fit(train_dataset,
+                        steps_per_epoch=(216 // bs),
+                        validation_steps=(107 // bs),
+                        batch_size=bs,
+                        epochs=200,
+                        verbose=1,
+                        validation_data=test_dataset
+                        #callbacks=[es]
+                        )
+
+    model.summary()
 
     model.save_weights(r'Models/weights1')
 
