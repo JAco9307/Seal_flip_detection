@@ -59,7 +59,7 @@ if __name__ == '__main__':
                         steps_per_epoch=(216 // bs),
                         validation_steps=(107 // bs),
                         batch_size=bs,
-                        epochs=200,
+                        epochs=150,
                         verbose=1,
                         validation_data=test_dataset
                         #callbacks=[es]
