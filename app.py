@@ -56,6 +56,7 @@ if __name__ == '__main__':
 
         X = np.expand_dims(img2, axis=0)
         val = model.predict(X)
+
         print(val)
         if val == 1:
             plt.title("Not Flipped", fontsize=20)
