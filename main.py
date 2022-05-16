@@ -7,15 +7,32 @@ from tensorflow.keras.preprocessing import image
 import matplotlib.pyplot as plt
 
 
+def combine_gen(*gens):
+    while True:
+        for g in gens:
+            yield next(g)
+
+
 if __name__ == '__main__':
     bs = 16
-    train = ImageDataGenerator(rescale=1/255)
-    test = ImageDataGenerator(rescale=1/255)
+    inc_wood = True
+    train = ImageDataGenerator(rescale=1 / 255)
+    test = ImageDataGenerator(rescale=1 / 255)
 
     train_dataset = train.flow_from_directory(r"Training_W/Train_white",
-                                              target_size=(256, 256), batch_size=bs, class_mode='binary')
+                                              target_size=(256, 256), batch_size=10, class_mode='binary')
+
     test_dataset = test.flow_from_directory(r"Training_W/Test_white",
-                                            target_size=(256, 256), batch_size=bs, class_mode='binary')
+                                            target_size=(256, 256), batch_size=10, class_mode='binary')
+
+    if inc_wood:
+        train_dataset_W = train.flow_from_directory(r"Training_W_W/Train_white",
+                                                    target_size=(256, 256), batch_size=10, class_mode='binary')
+        train_dataset = combine_gen(train_dataset, train_dataset_W)
+
+        test_dataset_W = test.flow_from_directory(r"Training_W_W/Test_white",
+                                                  target_size=(256, 256), batch_size=10, class_mode='binary')
+        test_dataset = combine_gen(test_dataset, test_dataset_W)
 
     model = keras.Sequential()
 
@@ -56,8 +73,8 @@ if __name__ == '__main__':
     es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
 
     history = model.fit(train_dataset,
-                        steps_per_epoch=(216 // bs),
-                        validation_steps=(107 // bs),
+                        steps_per_epoch=(420 // bs),
+                        validation_steps=(200 // bs),
                         batch_size=bs,
                         epochs=150,
                         verbose=1,
@@ -67,6 +84,6 @@ if __name__ == '__main__':
 
     model.summary()
 
-    model.save_weights(r'Models/weights1')
+    model.save_weights(r'Models/weights_w_wood')
 
 

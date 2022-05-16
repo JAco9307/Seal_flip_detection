@@ -8,13 +8,22 @@ import matplotlib.pyplot as plt
 
 
 if __name__ == '__main__':
+    inc_wood = True
     train = ImageDataGenerator(rescale=1/255)
     test = ImageDataGenerator(rescale=1/255)
 
     train_dataset = train.flow_from_directory(r"Training_W/Train_white",
                                               target_size=(256, 256), batch_size=10, class_mode='binary')
+
     test_dataset = test.flow_from_directory(r"Training_W/Test_white",
                                             target_size=(256, 256), batch_size=10, class_mode='binary')
+
+    if inc_wood:
+        train_dataset += train.flow_from_directory(r"Training_W_W/Train_white",
+                                                   target_size=(256, 256), batch_size=10, class_mode='binary')
+
+        test_dataset += test.flow_from_directory(r"Training_W_W/Test_white",
+                                                 target_size=(256, 256), batch_size=10, class_mode='binary')
 
     model = keras.Sequential()
 
@@ -48,7 +57,7 @@ if __name__ == '__main__':
 
     model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
-    model.load_weights(r'Model/weights1')
+    model.load_weights(r'Models/weights1')
 
     model.summary()
 
