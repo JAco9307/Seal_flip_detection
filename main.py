@@ -1,5 +1,6 @@
 import numpy as np
 import scipy
+from keras import regularizers
 from keras.callbacks import EarlyStopping
 from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
@@ -56,7 +57,8 @@ if __name__ == '__main__':
     model.add(keras.layers.Flatten())
 
     # Hidden layer with 512 neurons and Rectified Linear Unit activation function
-    model.add(keras.layers.Dense(256, activation='relu'))
+    model.add(keras.layers.Dense(256, activation='relu',
+                                 kernel_regularizer=regularizers.l2(0.001)))
 
     # Output layer with single neuron which gives 0 for Cat or 1 for Dog
     # Here we use sigmoid activation function which makes our model output to lie between 0 and 1
@@ -66,11 +68,7 @@ if __name__ == '__main__':
 
     model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
-    # from tensorflow.keras.optimizers import SGD
-    # opt = SGD(lr=0.01)
-    # model.compile(loss="categorical_crossentropy", optimizer=opt)
-
-    es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20)
+    # es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20) this sucks
 
     history = model.fit(train_dataset,
                         steps_per_epoch=(417 // bs),
@@ -79,7 +77,6 @@ if __name__ == '__main__':
                         epochs=150,
                         verbose=1,
                         validation_data=test_dataset
-                        #callbacks=[es]
                         )
 
     model.summary()

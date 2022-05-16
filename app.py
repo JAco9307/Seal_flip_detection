@@ -36,31 +36,23 @@ if __name__ == '__main__':
     # Hidden layer with 512 neurons and Rectified Linear Unit activation function
     model.add(keras.layers.Dense(256, activation='relu',
                                  kernel_regularizer=regularizers.l2(0.001)))
+    keras.layers.Dropout(0.5)
 
     # Output layer with single neuron which gives 0 for Cat or 1 for Dog
     # Here we use sigmoid activation function which makes our model output to lie between 0 and 1
     model.add(keras.layers.Dense(1, activation='sigmoid'))
-
-    # model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
-
-    #model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
     model.load_weights(r'Models/weights_w_wood')
 
     model.summary()
 
     def predict_image(img1):
-        img2 = cv2.resize(img1, (256, 256))
-        img3 = img2[..., ::-1]
-
-        img2 = img2[..., ::-1].astype(np.float32)
-
         img1 = img1[..., ::-1]
+        plt.imshow(img1)
+        plt.axis('off')
 
-        f, axarr = plt.subplots(2, 1)
-        axarr[0].imshow(img1)
-
-        # Y = image.img_to_array(img2)
+        img2 = cv2.resize(img1, (256, 256))
+        img2 = img2[..., ::-1].astype(np.float32)
 
         X = np.expand_dims(img2, axis=0)
         val = model.predict(X)
@@ -69,9 +61,6 @@ if __name__ == '__main__':
             plt.title("Not Flipped", fontsize=20)
         elif val == 0:
             plt.title("Flipped", fontsize=20)
-        axarr[1].imshow(img3)
-        axarr[0].axis('off')
-        axarr[1].axis('off')
         plt.show()
 
     while True:
