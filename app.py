@@ -1,9 +1,7 @@
 import numpy as np
 import cv2
-import tensorflow as tf
+from keras import regularizers
 from tensorflow import keras
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.preprocessing import image
 import matplotlib.pyplot as plt
 
 
@@ -36,7 +34,8 @@ if __name__ == '__main__':
     model.add(keras.layers.Flatten())
 
     # Hidden layer with 512 neurons and Rectified Linear Unit activation function
-    model.add(keras.layers.Dense(256, activation='relu'))
+    model.add(keras.layers.Dense(256, activation='relu',
+                                 kernel_regularizer=regularizers.l2(0.001)))
 
     # Output layer with single neuron which gives 0 for Cat or 1 for Dog
     # Here we use sigmoid activation function which makes our model output to lie between 0 and 1
