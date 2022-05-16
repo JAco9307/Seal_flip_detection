@@ -14,25 +14,6 @@ def combine_gen(*gens):
 
 
 if __name__ == '__main__':
-    inc_wood = True
-    train = ImageDataGenerator(rescale=1 / 255)
-    test = ImageDataGenerator(rescale=1 / 255)
-
-    train_dataset = train.flow_from_directory(r"Training_W/Train_white",
-                                              target_size=(256, 256), batch_size=10, class_mode='binary')
-
-    test_dataset = test.flow_from_directory(r"Training_W/Test_white",
-                                            target_size=(256, 256), batch_size=10, class_mode='binary')
-
-    if inc_wood:
-        train_dataset_W = train.flow_from_directory(r"Training_W_W/Train_white",
-                                                    target_size=(256, 256), batch_size=10, class_mode='binary')
-        train_dataset = combine_gen(train_dataset, train_dataset_W)
-
-        test_dataset_W = test.flow_from_directory(r"Training_W_W/Test_white",
-                                                  target_size=(256, 256), batch_size=10, class_mode='binary')
-        test_dataset = combine_gen(test_dataset, test_dataset_W)
-
     model = keras.Sequential()
 
     # Convolutional layer and maxpool layer 1
@@ -63,7 +44,7 @@ if __name__ == '__main__':
 
     # model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-    model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
+    #model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
 
     model.load_weights(r'Models/weights_w_wood')
 
@@ -71,11 +52,14 @@ if __name__ == '__main__':
 
     def predict_image(img1):
         img2 = cv2.resize(img1, (256, 256))
+        img3 = img2[..., ::-1]
+
         img2 = img2[..., ::-1].astype(np.float32)
 
         img1 = img1[..., ::-1]
 
-        plt.imshow(img1)
+        f, axarr = plt.subplots(2, 1)
+        axarr[0].imshow(img1)
 
         # Y = image.img_to_array(img2)
 
@@ -83,9 +67,12 @@ if __name__ == '__main__':
         val = model.predict(X)
         print(val)
         if val == 1:
-            plt.title("Not Flipped", fontsize=24)
+            plt.title("Not Flipped", fontsize=20)
         elif val == 0:
-            plt.title("Flipped", fontsize=24)
+            plt.title("Flipped", fontsize=20)
+        axarr[1].imshow(img3)
+        axarr[0].axis('off')
+        axarr[1].axis('off')
         plt.show()
 
     while True:
