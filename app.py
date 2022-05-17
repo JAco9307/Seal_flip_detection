@@ -12,17 +12,18 @@ def combine_gen(*gens):
 
 
 if __name__ == '__main__':
+    shape = (360, 640)
     model = keras.Sequential()
 
     # Convolutional layer and maxpool layer 1
-    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 3)))
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(640, 640, 3)))
     model.add(keras.layers.MaxPool2D(2, 2))
 
     # Convolutional layer and maxpool layer 2
     model.add(keras.layers.Conv2D(64, (3, 3), activation='relu'))
     model.add(keras.layers.MaxPool2D(2, 2))
 
-    # Convolutional layer and maxpool layer 3
+    #Convolutional layer and maxpool layer 3
     model.add(keras.layers.Conv2D(128, (3, 3), activation='relu'))
     model.add(keras.layers.MaxPool2D(2, 2))
 
@@ -35,8 +36,7 @@ if __name__ == '__main__':
 
     # Hidden layer with 512 neurons and Rectified Linear Unit activation function
     model.add(keras.layers.Dense(256, activation='relu',
-                                 kernel_regularizer=regularizers.l2(0.001)))
-    keras.layers.Dropout(0.5)
+                                 kernel_regularizer=regularizers.l2(0.01)))
 
     # Output layer with single neuron which gives 0 for Cat or 1 for Dog
     # Here we use sigmoid activation function which makes our model output to lie between 0 and 1
@@ -51,7 +51,7 @@ if __name__ == '__main__':
         plt.imshow(img1)
         plt.axis('off')
 
-        img2 = cv2.resize(img1, (256, 256))
+        img2 = cv2.resize(img1, shape)
         img2 = img2[..., ::-1].astype(np.float32)
 
         X = np.expand_dims(img2, axis=0)
