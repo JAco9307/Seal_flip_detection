@@ -16,15 +16,15 @@ def combine_gen(*gens):
 
 if __name__ == '__main__':
     bs = 10
-    shape = (640, 640)
-    inc_wood = True
+    shape = (360, 360)
+    inc_wood = False
     train = ImageDataGenerator(rescale=1 / 255)
     test = ImageDataGenerator(rescale=1 / 255)
 
-    train_dataset = train.flow_from_directory(r"Training_W/Train_white",
+    train_dataset = train.flow_from_directory(r"Training_p/Train_white",
                                               target_size=shape, batch_size=bs, class_mode='binary')
 
-    test_dataset = test.flow_from_directory(r"Training_W/Test_white",
+    test_dataset = test.flow_from_directory(r"Training_p/Test_white",
                                             target_size=shape, batch_size=bs, class_mode='binary')
 
     if inc_wood:
@@ -39,7 +39,7 @@ if __name__ == '__main__':
     model = keras.Sequential()
 
     # Convolutional layer and maxpool layer 1
-    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(640, 640, 3)))
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(360, 360, 3)))
     model.add(keras.layers.MaxPool2D(2, 2))
 
     # Convolutional layer and maxpool layer 2
@@ -67,21 +67,21 @@ if __name__ == '__main__':
 
     # model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
 
-    model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.001), metrics='accuracy')
+    model.compile(loss='binary_crossentropy', optimizer=keras.optimizers.RMSprop(learning_rate=0.005), metrics='accuracy')
 
     # es = EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20) this sucks
 
     history = model.fit(train_dataset,
-                        steps_per_epoch=(417 // bs),
-                        validation_steps=(200 // bs),
+                        steps_per_epoch=(len(train_dataset) // bs),
+                        validation_steps=(len(test_dataset) // bs),
                         batch_size=bs,
-                        epochs=100,
+                        epochs=300,
                         verbose=1,
                         validation_data=test_dataset
                         )
 
     model.summary()
 
-    model.save_weights(r'Models/weights_w_wood2')
+    model.save_weights(r'Models/weights_pp_hr')
 
 

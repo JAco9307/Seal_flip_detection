@@ -3,7 +3,7 @@ import cv2
 from keras import regularizers
 from tensorflow import keras
 import matplotlib.pyplot as plt
-
+import time
 
 def combine_gen(*gens):
     while True:
@@ -12,11 +12,11 @@ def combine_gen(*gens):
 
 
 if __name__ == '__main__':
-    shape = (360, 640)
+    shape = (256, 256)
     model = keras.Sequential()
 
     # Convolutional layer and maxpool layer 1
-    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(640, 640, 3)))
+    model.add(keras.layers.Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 3)))
     model.add(keras.layers.MaxPool2D(2, 2))
 
     # Convolutional layer and maxpool layer 2
@@ -42,14 +42,14 @@ if __name__ == '__main__':
     # Here we use sigmoid activation function which makes our model output to lie between 0 and 1
     model.add(keras.layers.Dense(1, activation='sigmoid'))
 
-    model.load_weights(r'Models/weights_w_wood')
+    model.load_weights(r'Models/weights1')
 
     model.summary()
 
     def predict_image(img1):
         img1 = img1[..., ::-1]
-        plt.imshow(img1)
-        plt.axis('off')
+        #plt.imshow(img1)
+        #plt.axis('off')
 
         img2 = cv2.resize(img1, shape)
         img2 = img2[..., ::-1].astype(np.float32)
@@ -62,13 +62,14 @@ if __name__ == '__main__':
             plt.title("Not Flipped", fontsize=20)
         elif val == 0:
             plt.title("Flipped", fontsize=20)
-        plt.show()
+        #plt.show()
 
     while True:
         inp = input('Waiting for input')
         if inp == 'exit':
             break
         print("Processing")
+        start = time.time()
         cam = cv2.VideoCapture(1, cv2.CAP_DSHOW)
         result, image = cam.read()
         cam.release()
@@ -77,4 +78,5 @@ if __name__ == '__main__':
 
         else:
             print("No image detected. Please! try again")
-
+        end = time.time()
+        print(end - start)
